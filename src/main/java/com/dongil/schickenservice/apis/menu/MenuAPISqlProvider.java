@@ -1,4 +1,4 @@
-package com.dongil.schickenservice.api.menu;
+package com.dongil.schickenservice.apis.menu;
 
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import org.apache.ibatis.jdbc.SQL;

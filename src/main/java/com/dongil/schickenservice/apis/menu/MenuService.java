@@ -1,4 +1,4 @@
-package com.dongil.schickenservice.api.menu;
+package com.dongil.schickenservice.apis.menu;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.dongil.schickenservice.api.menu;
+package com.dongil.schickenservice.apis.menu;
 
 import org.apache.ibatis.annotations.*;
 
@@ -25,7 +25,7 @@ public interface MenuDAO {
     @Results(id="getCategoryVO", value = {
             @Result(id = true, column = "id", property = "id"),
             @Result(column = "name", property = "name"),
-            @Result(column = "id", property = "menus", many = @Many(select = "com.groups.schicken.menu.api.MenuDAO.getCategoryMenus"))
+            @Result(column = "id", property = "menus", many = @Many(select = "com.dongil.schickenservice.apis.menu.MenuDAO.getCategoryMenus"))
     })
     CategoryVO getMenusASCategoryVO(String categoryId);
 
