@@ -11,6 +11,7 @@ import java.util.List;
 @RequestMapping("/v1/api/")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class MenuController {
 
     private final MenuService service;
