@@ -1,6 +1,7 @@
 package com.dongil.schickenservice.apis.menu;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,16 @@ public class MenuService {
         return menuDAO.getMenus();
     }
 
-    public CategoryVO getMenus(String categoryId) {
-        return menuDAO.getMenusASCategoryVO(categoryId);
+    public CategoryVO getMenus(String categoryId) throws NotFoundException {
+        CategoryVO category = menuDAO.getMenusASCategoryVO(categoryId);
+
+        if(category == null) throw new NotFoundException("categoryId none");
+
+        if(category.getId().equals("0")){
+            category.setMenus(getMenus());
+        }
+
+        return category;
     }
 
     public List<CategoryVO> getCategories() {

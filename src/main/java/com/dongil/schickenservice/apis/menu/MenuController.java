@@ -2,6 +2,7 @@ package com.dongil.schickenservice.apis.menu;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +45,14 @@ public class MenuController {
     }
 
     @GetMapping("menus/category/{categoryId}")
-    public ResponseEntity<CategoryVO> getMenusByCategory(@PathVariable String categoryId){
+    public ResponseEntity<?> getMenusByCategory(@PathVariable String categoryId){
         try{
             CategoryVO category = service.getMenus(categoryId);
-            if(category == null || category.getMenus().isEmpty()){
-                return ResponseEntity.notFound().build();
-            }
 
             return ResponseEntity.ok(category);
+        } catch (NotFoundException e){
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         } catch (Exception e){
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
