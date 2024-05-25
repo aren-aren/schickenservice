@@ -31,11 +31,13 @@ public interface MenuDAO {
 
     @Select("""
     SELECT
-          id
-        , menu
-        , price
+          m.id
+        , m.menu
+        , m.price
+        , a.url
     FROM menu m
         INNER JOIN menu_and_category mac ON mac.menu_id = m.id
+        LEFT JOIN attach a ON a.parent_id = m.id AND a.table_id='106'
     WHERE mac.menu_category = #{categoryId}
     """)
     List<MenuVO> getCategoryMenus(String categoryId);
