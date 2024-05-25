@@ -71,4 +71,18 @@ public interface MenuDAO {
 
     @InsertProvider(MenuAPISqlProvider.class)
     int setMenuAndCategory(MenuIntoCategoryVO menuIntoCategoryVO);
+
+    @Insert("""
+    INSERT INTO menu (id, price, menu)
+    VALUES (#{id}, #{price}, #{menu})
+    """)
+    @SelectKey(keyProperty = "id", before = true, statement = "SELECT nextval(seq1)", resultType = String.class)
+    int insertMenu(MenuInsertVO menuVO);
+
+    @Update("""
+    UPDATE menu
+    SET menu = #{menu}, price = #{price}
+    WHERE id = #{id}
+    """)
+    int updateMenu(MenuInsertVO menuVO);
 }

@@ -44,6 +44,31 @@ public class MenuController {
         }
     }
 
+    @PostMapping("menus")
+    public ResponseEntity<MenuVO> insertMenu(@RequestBody MenuInsertVO menuVO){
+        try{
+            MenuVO createdMenu = service.insertMenu(menuVO);
+            log.info("created : {}", createdMenu);
+            return ResponseEntity.ok(createdMenu);
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("menus/{menuId}")
+    public ResponseEntity<MenuVO> updateMenu(@RequestBody MenuInsertVO menuVO, @PathVariable String menuId){
+        try{
+            menuVO.setId(menuId);
+            MenuVO updatedMenu = service.updateMenu(menuVO);
+            log.info("updated : {}", updatedMenu);
+            return ResponseEntity.ok(updatedMenu);
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("menus/category/{categoryId}")
     public ResponseEntity<?> getMenusByCategory(@PathVariable String categoryId){
         try{

@@ -53,4 +53,32 @@ public class MenuService {
 
         return menuDAO.getMenusASCategoryVO(menuIntoCategoryVO.getCategoryId());
     }
+
+    @Transactional
+    public MenuVO insertMenu(MenuInsertVO menuVO) {
+        if(menuVO.getAttach() != null && !menuVO.getAttach().isEmpty()){
+            /* 파일 입출력 */
+        }
+
+        int result = menuDAO.insertMenu(menuVO);
+
+        if(menuVO.getId() == null) throw new RuntimeException("insertMenu : selectKey null");
+        if(result == 0) throw new RuntimeException("insertMenu : insert result 0");
+
+        return menuDAO.getMenu(menuVO.getId());
+    }
+
+    @Transactional
+    public MenuVO updateMenu(MenuInsertVO menuVO) {
+        if(menuVO.getAttach() != null && !menuVO.getAttach().isEmpty()){
+            /* 파일 업데이트 */
+            /* 기존에 파일이 있다면 삭제하고, 이미지파일 추가 */
+        }
+
+        int result = menuDAO.updateMenu(menuVO);
+
+        if(result == 0) throw new RuntimeException("updateMenu : update result 0");
+
+        return menuDAO.getMenu(menuVO.getId());
+    }
 }
