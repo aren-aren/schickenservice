@@ -6,6 +6,8 @@ import java.util.List;
 
 @Mapper
 public interface MenuMapper {
+    String NAMESPACE = "com.dongil.schickenservice.apis.menu.MenuMapper.";
+
     @Select("""
     SELECT
         m.id
@@ -25,7 +27,7 @@ public interface MenuMapper {
     @Results(id="getCategoryVO", value = {
             @Result(id = true, column = "id", property = "id"),
             @Result(column = "name", property = "name"),
-            @Result(column = "id", property = "menus", many = @Many(select = "com.dongil.schickenservice.apis.menu.MenuDAO.getCategoryMenus"))
+            @Result(column = "id", property = "menus", many = @Many(select = NAMESPACE + "getCategoryMenus"))
     })
     CategoryVO getMenusASCategoryVO(String categoryId);
 
@@ -37,7 +39,7 @@ public interface MenuMapper {
         , a.url
     FROM menu m
         INNER JOIN menu_and_category mac ON mac.menu_id = m.id
-        LEFT JOIN attach a ON a.parent_id = m.id AND a.table_id='106'
+        LEFT JOIN attach a ON a.parent_id = m.id AND a.tbl_id='106'
     WHERE mac.menu_category = #{categoryId}
     """)
     List<MenuVO> getCategoryMenus(String categoryId);
