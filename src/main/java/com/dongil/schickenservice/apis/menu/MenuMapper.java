@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface MenuDAO {
+public interface MenuMapper {
     @Select("""
     SELECT
         m.id
