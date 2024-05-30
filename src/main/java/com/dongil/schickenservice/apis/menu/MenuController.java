@@ -45,7 +45,7 @@ public class MenuController {
     }
 
     @PostMapping("menus")
-    public ResponseEntity<MenuVO> insertMenu(@RequestBody MenuInsertVO menuVO){
+    public ResponseEntity<MenuVO> insertMenu(MenuInsertVO menuVO){
         try{
             MenuVO createdMenu = service.insertMenu(menuVO);
             log.info("created : {}", createdMenu);
@@ -57,7 +57,7 @@ public class MenuController {
     }
 
     @PutMapping("menus/{menuId}")
-    public ResponseEntity<MenuVO> updateMenu(@RequestBody MenuInsertVO menuVO, @PathVariable String menuId){
+    public ResponseEntity<MenuVO> updateMenu(MenuInsertVO menuVO, @PathVariable String menuId){
         try{
             menuVO.setId(menuId);
             MenuVO updatedMenu = service.updateMenu(menuVO);

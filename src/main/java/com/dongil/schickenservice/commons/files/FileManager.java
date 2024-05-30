@@ -45,7 +45,7 @@ public class FileManager {
 
     public boolean deleteFile(FileVO fileVO) throws Exception {
         int result = fileMapper.deleteFile(fileVO.getId());
-        if(result == 0) throw new RuntimeException("deleteFile : file Delete fail");
+        if(result == 0) return true;
 
         return s3Service.deleteFile(fileVO.getName());
     }
