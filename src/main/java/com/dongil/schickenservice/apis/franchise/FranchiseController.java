@@ -1,10 +1,7 @@
 package com.dongil.schickenservice.apis.franchise;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,5 +15,10 @@ public class FranchiseController {
     @GetMapping("franchises")
     public List<FranchiseVO> getFranchises(){
         return franchiseService.getFranchises();
+    }
+
+    @GetMapping("franchises/{franchiseId}")
+    public FranchiseVO getFranchise(@PathVariable String franchiseId){
+        return franchiseService.getFranchise(franchiseId);
     }
 }

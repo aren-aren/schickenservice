@@ -9,4 +9,7 @@ public class FranchiseVO {
     String address;
     String addressDetail;
     String contactNumber;
+    String coorX;
+    String coorY;
+    byte[] map;
 }
