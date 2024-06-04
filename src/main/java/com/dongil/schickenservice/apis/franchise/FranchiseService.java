@@ -1,20 +1,26 @@
 package com.dongil.schickenservice.apis.franchise;
 
 import com.dongil.schickenservice.commons.rest.NaverCloudRest;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class FranchiseService {
-    private static final Logger log = LoggerFactory.getLogger(FranchiseService.class);
     private final FranchiseMapper franchiseMapper;
     private final NaverCloudRest naverCloudRest;
+    private final Map<String, byte[]> mapCache;
+
+    FranchiseService(FranchiseMapper franchiseMapper, NaverCloudRest naverCloudRest){
+        this.franchiseMapper = franchiseMapper;
+        this.naverCloudRest = naverCloudRest;
+        this.mapCache = new HashMap<>();
+    }
 
     public List<FranchiseVO> getFranchises() {
         return franchiseMapper.getFranchises();
@@ -35,11 +41,23 @@ public class FranchiseService {
             }
         }
 
-        if(franchiseVO.getMap() == null){
-            /* 지도 집어넣기 */
-        }
+        byte[] map = getMapData(franchiseVO);
+
+        franchiseVO.setMap(map);
 
         return franchiseVO;
+    }
+
+    private byte[] getMapData(FranchiseVO franchiseVO){
+        if(mapCache.containsKey(franchiseVO.getId())){
+            /* 지도 집어넣기 */
+            return mapCache.get(franchiseVO.getId());
+        }
+
+        byte[] map = naverCloudRest.getAddrMap(franchiseVO.getCoorX() + " " + franchiseVO.getCoorY());
+        mapCache.put(franchiseVO.getId(), map);
+
+        return map;
     }
 
     private boolean setCoordinate(FranchiseVO franchiseVO){
