@@ -111,9 +111,9 @@ public class MenuController {
     }
 
     @PostMapping("categories")
-    public ResponseEntity<CategoryVO> setCategory(@RequestBody CategoryVO categoryVO){
+    public ResponseEntity<List<CategoryVO>> setCategory(@RequestBody CategoryVO categoryVO){
         try {
-            CategoryVO created = service.setCategory(categoryVO);
+            List<CategoryVO> created = service.setCategory(categoryVO);
             if(created == null){
                 ResponseEntity.badRequest().build();
             }

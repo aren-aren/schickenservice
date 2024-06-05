@@ -4,6 +4,9 @@ import com.dongil.schickenservice.commons.files.FileManager;
 import com.dongil.schickenservice.commons.files.FileVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +18,13 @@ public class MenuService {
     private final MenuMapper menuMapper;
     private final FileManager fileManager;
 
+
+    @Cacheable("menus")
     public List<MenuVO> getMenus() {
         return menuMapper.getMenus();
     }
 
+    @Cacheable(value = "menus", key = "'category_' + #categoryId")
     public CategoryVO getMenus(String categoryId) throws NotFoundException {
         CategoryVO category = menuMapper.getMenusASCategoryVO(categoryId);
 
@@ -31,24 +37,28 @@ public class MenuService {
         return category;
     }
 
+    @Cacheable("categories")
     public List<CategoryVO> getCategories() {
         return menuMapper.getCategories();
     }
 
     @Transactional
-    public CategoryVO setCategory(CategoryVO categoryVO) {
+    @CachePut("categories")
+    public List<CategoryVO> setCategory(CategoryVO categoryVO) {
         int result = menuMapper.insertCategory(categoryVO);
 
         if(result == 0) throw new RuntimeException("insert 실패");
 
-        return menuMapper.getCategory(categoryVO.getId());
+        return menuMapper.getCategories();
     }
 
+    @Cacheable(value="menus", key="'menu_'+#menuId")
     public MenuVO getMenu(String menuId) {
         return menuMapper.getMenu(menuId);
     }
 
     @Transactional
+    @CachePut(value = "menus", key = "'category_' + #menuIntoCategoryVO.categoryId")
     public CategoryVO setMenuAndCategory(MenuIntoCategoryVO menuIntoCategoryVO) {
         int result = menuMapper.setMenuAndCategory(menuIntoCategoryVO);
 
@@ -58,6 +68,7 @@ public class MenuService {
     }
 
     @Transactional
+    @CacheEvict("menus")
     public MenuVO insertMenu(MenuInsertVO menuVO) throws Exception {
         int result = menuMapper.insertMenu(menuVO);
 
@@ -77,6 +88,7 @@ public class MenuService {
     }
 
     @Transactional
+    @CacheEvict("menus")
     public MenuVO updateMenu(MenuInsertVO menuVO) throws Exception {
         if(menuVO.getAttach() != null && !menuVO.getAttach().isEmpty()){
             FileVO oldFile = new FileVO();

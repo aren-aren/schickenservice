@@ -2,31 +2,32 @@ package com.dongil.schickenservice.apis.franchise;
 
 import com.dongil.schickenservice.commons.rest.NaverCloudRest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "franchises")
 public class FranchiseService {
     private final FranchiseMapper franchiseMapper;
     private final NaverCloudRest naverCloudRest;
-    private final Map<String, byte[]> mapCache;
 
     FranchiseService(FranchiseMapper franchiseMapper, NaverCloudRest naverCloudRest){
         this.franchiseMapper = franchiseMapper;
         this.naverCloudRest = naverCloudRest;
-        this.mapCache = new HashMap<>();
     }
 
+    @Cacheable
     public List<FranchiseVO> getFranchises() {
         return franchiseMapper.getFranchises();
     }
 
     @Transactional
+    @Cacheable(key = "#franchiseId")
     public FranchiseVO getFranchise(String franchiseId) {
         FranchiseVO franchiseVO = franchiseMapper.getFranchise(franchiseId);
 
@@ -49,15 +50,7 @@ public class FranchiseService {
     }
 
     private byte[] getMapData(FranchiseVO franchiseVO){
-        if(mapCache.containsKey(franchiseVO.getId())){
-            /* 지도 집어넣기 */
-            return mapCache.get(franchiseVO.getId());
-        }
-
-        byte[] map = naverCloudRest.getAddrMap(franchiseVO.getCoorX() + " " + franchiseVO.getCoorY());
-        mapCache.put(franchiseVO.getId(), map);
-
-        return map;
+        return naverCloudRest.getAddrMap(franchiseVO.getCoorX() + " " + franchiseVO.getCoorY());
     }
 
     private boolean setCoordinate(FranchiseVO franchiseVO){

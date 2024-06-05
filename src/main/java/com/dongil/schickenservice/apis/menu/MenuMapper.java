@@ -70,7 +70,7 @@ public interface MenuMapper {
     SELECT m.id, m.menu, m.price, a.url
     FROM menu m
         LEFT JOIN attach a ON a.parent_id = m.id AND a.tbl_id='106'
-    WHERE id = #{menuId}
+    WHERE m.id = #{menuId}
     """)
     MenuVO getMenu(String menuId);
 
