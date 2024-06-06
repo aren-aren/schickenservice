@@ -14,8 +14,12 @@ public class OrderController {
 
     @GetMapping("customers/{email}/login")
     public ResponseEntity<String> loginStart(CustomerVO customerVO, HttpSession session){
-        CustomerVO loginId = service.loginProcess(customerVO);
-        session.setAttribute("loginId", loginId);
+        try {
+            CustomerVO loginId = service.loginProcess(customerVO);
+            session.setAttribute("loginId", loginId);
+        } catch (RuntimeException e){
+            return ResponseEntity.internalServerError().body("메일 전송 실패");
+        }
 
         return ResponseEntity.ok("success");
     }
