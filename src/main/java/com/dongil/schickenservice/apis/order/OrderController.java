@@ -1,6 +1,5 @@
 package com.dongil.schickenservice.apis.order;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +12,9 @@ public class OrderController {
     private final OrderService service;
 
     @GetMapping("customers/{email}/login")
-    public ResponseEntity<String> loginStart(CustomerVO customerVO, HttpSession session){
+    public ResponseEntity<String> loginStart(CustomerVO customerVO){
         try {
-            CustomerVO loginId = service.loginProcess(customerVO);
-            session.setAttribute("loginId", loginId);
+            service.loginProcess(customerVO);
         } catch (RuntimeException e){
             return ResponseEntity.internalServerError().body("메일 전송 실패");
         }
@@ -25,10 +23,9 @@ public class OrderController {
     }
 
     @PostMapping("customers/{email}/login")
-    public ResponseEntity<CustomerVO> loginCheck(@RequestBody CustomerVO customerVO, HttpSession session){
-        CustomerVO loginId = (CustomerVO) session.getAttribute("loginId");
-        CustomerVO logonId = service.loginCheck(customerVO, loginId);
+    public ResponseEntity<LoginResultVO> loginCheck(@RequestBody CustomerVO customerVO){
+        CustomerVO logonId = service.loginCheck(customerVO);
 
-        return ResponseEntity.ok(logonId);
+        return ResponseEntity.ok(new LoginResultVO(logonId == null ? "fail" : "success", logonId));
     }
 }

@@ -2,21 +2,28 @@ package com.dongil.schickenservice.apis.order;
 
 import com.dongil.schickenservice.commons.mail.MailSender;
 import jakarta.mail.MessagingException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class OrderService {
     private final OrderMapper orderMapper;
     private final MailSender mailSender;
+    private final Map<String, CustomerVO> loginProcessMap;
 
-    public CustomerVO loginProcess(CustomerVO customerVO) {
+    public OrderService(OrderMapper orderMapper, MailSender mailSender) {
+        this.orderMapper = orderMapper;
+        this.mailSender = mailSender;
+        this.loginProcessMap = new ConcurrentHashMap<>();
+    }
+
+    public void loginProcess(CustomerVO customerVO) {
         String password = createPassword();
         customerVO.setPassword(password);
 
@@ -28,11 +35,12 @@ public class OrderService {
             throw new RuntimeException(e);
         }
 
-        return customerVO;
+        loginProcessMap.put(customerVO.getEmail(), customerVO);
     }
 
     @Transactional
-    public CustomerVO loginCheck(CustomerVO customerVO, CustomerVO passwordVO) {
+    public CustomerVO loginCheck(CustomerVO customerVO) {
+        CustomerVO passwordVO = loginProcessMap.get(customerVO.getEmail());
         if(customerVO.getEmail().equals(passwordVO.getEmail()) && customerVO.getPassword().equals(passwordVO.getPassword())){
             CustomerVO found = orderMapper.getCustomer(customerVO);
 
